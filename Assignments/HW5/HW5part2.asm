@@ -33,7 +33,7 @@ max:
     lw $t1, 0($s0) # init max as first element
     lw $t2, arrLength # $t2 contains array's length
     
-    loop:
+    maxLoop:
         ### Getting to correct address in array
         mul $t3, $t0, 4 # $t3 = tracks bytes processed for elem address in arr
         add $t3, $t3, $s0 # $t3 = curr elem address in arr where $s0 contains base address
@@ -53,7 +53,7 @@ max:
         
         # if not => increment counter => go to loop
         addi $t0, $t0, 1
-        bne $t0, $t2, loop
+        bne $t0, $t2, maxLoop
 
         # all elems processed => print max => back to main
         li $v0, 4
@@ -73,10 +73,9 @@ max:
     updateMax:
         move $t1, $t4 # $t4 was > $t1, so relplace $t1 value with $t4 value
         addi $t0, $t0, 1 # increment counter
-        bne $t0, $t2, loop # return to loop if more elems to process
+        bne $t0, $t2, maxLoop # return to loop if more elems to process
 
         # all elems processed => print max => back to main
-
         li $v0, 4
         la $a0, maxMsg
         syscall
@@ -89,7 +88,69 @@ max:
         la $a0, newline
         syscall
 
+        jr $ra
+
 min:
+    li $t0, 0 # counter for the loop
+    lw $t1, 0($s0) # init max as first element
+    lw $t2, arrLength # $t2 contains array's length
+    
+    minLoop:
+        ### Getting to correct address in array
+        mul $t3, $t0, 4 # $t3 = tracks bytes processed for elem address in arr
+        add $t3, $t3, $s0 # $t3 = curr elem address in arr where $s0 contains base address
+        lw $t4, 0($t3) # load the curr elem into $t4
+        
+        ### DEBUG: Print the whole list (perhaps for user's sake)
+        #li $v0, 1
+        #move $a0, $t4
+        #syscall
+
+        #li $v0, 4
+        #la $a0, newline
+        #syscall
+        
+        ### Greater than check
+        blt $t4, $t1, updateMin # if so => update max
+        
+        # if not => increment counter => go to loop
+        addi $t0, $t0, 1
+        bne $t0, $t2, minLoop
+
+        # all elems processed => print max => back to main
+        li $v0, 4
+        la $a0, minMsg
+        syscall
+
+        li $v0, 1
+        move $a0, $t1 # min value
+        syscall
+
+        li $v0, 4
+        la $a0, newline
+        syscall
+
+        jr $ra
+    
+    updateMin:
+        move $t1, $t4 # $t4 was < $t1, so relplace $t1 value with $t4 value
+        addi $t0, $t0, 1 # increment counter
+        bne $t0, $t2, minLoop # return to loop if more elems to process
+
+        # all elems processed => print max => back to main
+        li $v0, 4
+        la $a0, minMsg
+        syscall
+
+        li $v0, 1
+        move $a0, $t1 # min value
+        syscall
+
+        li $v0, 4
+        la $a0, newline
+        syscall
+
+        jr $ra
     jr $ra
 
 summation:
