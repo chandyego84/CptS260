@@ -23,7 +23,7 @@ main:
     # note: we use jal to save the $ra of calling function
     jal max # calculate max in the array
     jal min # calculate min in the array
-    jal summation # calculate sum of array
+    jal sum # calculate sum of array
 
     ### Exit
     j exit
@@ -92,7 +92,7 @@ max:
 
 min:
     li $t0, 0 # counter for the loop
-    lw $t1, 0($s0) # init max as first element
+    lw $t1, 0($s0) # init min as first element
     lw $t2, arrLength # $t2 contains array's length
     
     minLoop:
@@ -111,7 +111,7 @@ min:
         #syscall
         
         ### Greater than check
-        blt $t4, $t1, updateMin # if so => update max
+        blt $t4, $t1, updateMin # if so => update min
         
         # if not => increment counter => go to loop
         addi $t0, $t0, 1
@@ -151,10 +151,48 @@ min:
         syscall
 
         jr $ra
-    jr $ra
 
-summation:
-    jr $ra
+sum:
+    li $t0, 0 # counter for the loop
+    li $t1, 0 # current sum
+    lw $t2, arrLength # $t2 contains array's length
+
+    sumLoop:
+        ### Getting to correct address in array
+        mul $t3, $t0, 4 # $t3 = tracks bytes processed for elem address in arr
+        add $t3, $t3, $s0 # $t3 = curr elem address in arr where $s0 contains base address
+        lw $t4, 0($t3) # load the curr elem into $t4
+        
+        ### DEBUG: Print the whole list (perhaps for user's sake)
+        #li $v0, 1
+        #move $a0, $t4
+        #syscall
+
+        #li $v0, 4
+        #la $a0, newline
+        #syscall
+        
+        # add to current sum
+        add $t1, $t1, $t4
+        
+        # increment counter => go to loop
+        addi $t0, $t0, 1
+        bne $t0, $t2, sumLoop # if not all elements processed => keep looping
+
+        # all elems processed => print sum => back to main
+        li $v0, 4
+        la $a0, sumMsg
+        syscall
+
+        li $v0, 1
+        move $a0, $t1 # sum value
+        syscall
+
+        li $v0, 4
+        la $a0, newline
+        syscall
+
+        jr $ra
 
 exit:
     li $v0, 4
