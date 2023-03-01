@@ -1,7 +1,6 @@
 # Chandler Juego
 # CPTS 260 - HW 5 Part 1
 # Due: 3/10/2023
-# NOTE: Separated functions from main.
 
     .data
 welcomeMsg: .asciiz "Basic calculator. Operations: 0 => add, 1 => subtract, 2 => multiply, 3 => exit\n"
@@ -9,7 +8,7 @@ promptMsg1: .asciiz "Enter the first number: "
 promptMsg2: .asciiz "Enter the second number: "
 promptMsg3: .asciiz "Enter the operation type: "
 resultMsg: .asciiz "The result is: "
-exitMsg: .asciiz "Exiting the program!\n"
+exitMsg: .asciiz "Exiting the program."
 nl: .asciiz "\n"
 
 input1: .word 0 # memory location for user's first input
